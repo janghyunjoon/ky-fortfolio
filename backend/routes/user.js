@@ -107,4 +107,28 @@ router.post('/login', async (req, res) => {
   }
 })
 
+router.post('/logout',async(req,res)=>{
+  try {
+    const token = req.cookies.token
+
+    if(!token){
+      return res.status(400).json({message:"로그아웃된 상태입니다."})
+    }
+    try {
+      const decoded = jwt.verify(token,process.env.JWT_SECRET)
+
+      const user = await User.findById(decoded.userId)
+
+      if(user){
+        user.isLoggedIn=false
+        await user.save()
+      }
+    } catch (error) {
+      
+    }
+  } catch (error) {
+    
+  }
+})
+
 module.exports = router
